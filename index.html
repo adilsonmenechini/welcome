@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adilson Menechini — Senior SRE</title>
+<meta name="description" content="Solucionador de problemas com 17+ anos em tecnologia. Kubernetes, GitOps, IaC, observabilidade e IA aplicada à engenharia de plataforma.">
+<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1216" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Instrument panel: cool paper ground, ink-led type, telemetry labels in mono,
+   hairline rules as data separators, one restrained cyan-slate accent. */
+:root{
+  --bg:#f4f6f8; --surface:#fff; --surface-2:#eaeef1;
+  --fg:#10161c; --muted:#5b6672; --line:#dbe1e6;
+  --accent:#0a6c74; --accent-ink:#fff; --accent-soft:rgba(10,108,116,.09);
+  --sans:"Public Sans",system-ui,-apple-system,sans-serif;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1216; --surface:#121b21; --surface-2:#18232a;
+  --fg:#e5edf2; --muted:#8fa1ae; --line:#223039;
+  --accent:#5cc8d6; --accent-ink:#06222a; --accent-soft:rgba(92,200,214,.12);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0c1216; --surface:#121b21; --surface-2:#18232a;
+  --fg:#e5edf2; --muted:#8fa1ae; --line:#223039;
+  --accent:#5cc8d6; --accent-ink:#06222a; --accent-soft:rgba(92,200,214,.12);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{margin:0;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);
+  background:var(--bg);color:var(--fg);font:400 16px/1.65 var(--sans);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:clamp(20px,5vw,44px)}
+
+.mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+h1,h2,h3{text-wrap:balance}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color .25s}
+header.stuck{border-bottom-color:var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:16px}
+.logo{font-family:var(--display);font-weight:800;font-size:1.02rem;letter-spacing:-.02em;text-decoration:none}
+.logo i{color:var(--accent);font-style:normal}
+nav{display:flex;align-items:center;gap:4px}
+nav a{padding:7px 11px;border-radius:6px;text-decoration:none;color:var(--muted);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
+nav a:hover{color:var(--fg)}
+nav a[aria-current="true"]{color:var(--accent);background:var(--accent-soft)}
+#t{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;
+  padding:7px 11px;cursor:pointer;font:500 .7rem var(--mono);letter-spacing:.1em;
+  text-transform:uppercase;transition:color .2s,border-color .2s}
+#t:hover{color:var(--accent);border-color:var(--accent)}
+/* language toggle — a segmented control, not a dropdown */
+.lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);padding:7px 10px;cursor:pointer;
+  font:500 .68rem var(--mono);letter-spacing:.08em;transition:color .2s,background .2s}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+@media(max-width:720px){nav a:not(.keep){display:none}}
+
+/* hero */
+.hero{padding-block:clamp(64px,11vw,116px) clamp(44px,7vw,72px)}
+.tag{display:inline-flex;align-items:center;gap:9px;color:var(--accent)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft)}
+h1{font-family:var(--display);font-weight:800;letter-spacing:-.035em;line-height:.98;
+  font-size:clamp(38px,7.4vw,80px);margin:22px 0 24px;max-width:15ch}
+h1 em{font-style:normal;font-weight:500;color:var(--accent)}
+.lead{max-width:60ch;color:var(--muted);font-size:clamp(1rem,1.5vw,1.115rem);margin:0}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:7px;
+  border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;
+  font-size:.875rem;font-weight:500;transition:border-color .2s,color .2s,transform .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.p:hover{color:var(--accent-ink);opacity:.9}
+
+/* readout — figures set as instrument values, not decorative tiles */
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  border-block:1px solid var(--line)}
+.readout div{padding:26px 22px 26px 0;min-width:0}
+.readout b{display:block;font-family:var(--display);font-weight:700;font-size:1.9rem;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.readout span{display:block;color:var(--muted);font-size:.82rem;margin-top:5px}
+
+/* sections */
+section{padding-block:clamp(52px,7vw,84px);border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,36px);
+  letter-spacing:-.025em;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 36px;max-width:56ch;font-size:.95rem}
+
+/* stack rendered as a manifest, not pills */
+.stack{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.stack>div{display:grid;grid-template-columns:190px 1fr;gap:8px 24px;
+  padding:16px 0;border-bottom:1px solid var(--line)}
+.stack h3{margin:0;font-family:var(--mono);font-size:.7rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;padding-top:3px}
+.stack ul{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:0;padding:0;min-width:0}
+.stack li{position:relative;color:var(--fg);font-size:.92rem}
+.stack li:not(:last-child)::after{content:"·";position:absolute;right:-10px;color:var(--muted)}
+.stack li:hover{color:var(--accent)}
+
+/* career timeline on a rail */
+.rail{position:relative;padding-left:30px}
+.rail::before{content:"";position:absolute;left:4px;top:9px;bottom:9px;width:1px;background:var(--line)}
+.tl{position:relative;padding-block:8px 34px}
+.tl:last-child{padding-bottom:4px}
+.tl::before{content:"";position:absolute;left:-30px;top:13px;width:9px;height:9px;
+  border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.tl time{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:7px}
+.tl h3{margin:0;font-family:var(--display);font-weight:700;font-size:1.1rem;letter-spacing:-.015em}
+.tl .org{color:var(--accent);font-size:.84rem;margin:3px 0 12px}
+.tl ul{margin:0;padding-left:17px;color:var(--muted);font-size:.925rem}
+.tl li{margin-bottom:5px}
+.tl li::marker{color:var(--accent)}
+.role{margin-top:22px;padding-top:20px;border-top:1px dashed var(--line)}
+.role.first{margin-top:0;padding-top:0;border-top:0}
+.posto{font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:-.01em;margin:0 0 10px}
+.role .org{margin:3px 0 10px}
+.role ul li{margin-bottom:4px}
+
+/* education — dotted leaders like an index */
+.edu{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.edu li{display:grid;grid-template-columns:150px 1fr;gap:6px 24px;padding:18px 0;
+  border-bottom:1px solid var(--line)}
+.edu time{font-family:var(--mono);font-size:.7rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-variant-numeric:tabular-nums;padding-top:3px}
+.edu b{font-family:var(--display);font-weight:700;font-size:1rem}
+.edu span{color:var(--muted);font-size:.9rem}
+
+#contato{border-bottom:0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.links a{font-family:var(--mono);font-size:.78rem;letter-spacing:.02em;text-transform:none}
+
+footer{padding-block:34px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 20px;
+  justify-content:space-between;font-size:.82rem;border-top:1px solid var(--line)}
+footer span:last-child{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em}
+
+/* bilingual: every string ships in both languages as data-pt / data-en, and
+   JS swaps textContent — no display toggling, so nothing can be hidden twice */
+
+@media(max-width:640px){
+  .stack>div{grid-template-columns:1fr;gap:10px}
+  .edu li{grid-template-columns:1fr;gap:4px}
+  .rail{padding-left:22px}
+  .tl::before{left:-22px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="hd">
+    <div class="bar">
+      <a class="logo" href="#topo">adilson<i>.</i>menechini</a>
+      <nav>
+        <a href="#competencias" data-pt="Stack" data-en="Stack">Stack</a>
+        <a href="#experiencia" data-pt="Trajetória" data-en="Career">Trajetória</a>
+        <a href="#formacao" data-pt="Formação" data-en="Education">Formação</a>
+        <a href="#contato" data-pt="Contato" data-en="Contact">Contato</a>
+        <span class="lang" role="group" aria-label="Idioma / Language">
+          <button type="button" id="pt" aria-pressed="true">PT</button>
+          <button type="button" id="en" aria-pressed="false">EN</button>
+        </span>
+        <button id="t" aria-label="Alternar tema claro e escuro">Tema</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="topo">
+    <div class="hero">
+      <span class="tag mono" data-pt="Senior SRE · Platform Engineer · Reliability Specialist" data-en="Senior SRE · Platform Engineer · Reliability Specialist">Senior SRE · Platform Engineer · Reliability Specialist</span>
+      <h1><span data-pt="Plataformas cloud-native," data-en="Cloud-native platforms,">Plataformas cloud-native,</span> <em data-pt="resilientes e automatizadas." data-en="resilient and automated.">resilientes e automatizadas.</em></h1>
+      <p class="lead" data-pt="Solucionador de problemas com mais de 17 anos em tecnologia, 7+ em DevOps/SRE. Foco em reduzir toil, elevar a disponibilidade e otimizar custos, com Kubernetes, GitOps, IaC e observabilidade. Atuação em incidentes de alta severidade e post-mortems, aplicando IA (agentes e RAG) à engenharia de plataforma." data-en="Problem solver with 17+ years in technology, 7+ in DevOps/SRE. Focused on reducing toil, raising availability and optimising cost with Kubernetes, GitOps, IaC and observability. Handles high-severity incidents and post-mortems, applying AI (agents and RAG) to platform engineering.">Solucionador de problemas com mais de 17 anos em tecnologia, 7+ em DevOps/SRE. Foco em reduzir toil, elevar a disponibilidade e otimizar custos, com Kubernetes, GitOps, IaC e observabilidade. Atuação em incidentes de alta severidade e post-mortems, aplicando IA (agentes e RAG) à engenharia de plataforma.</p>
+      <div class="cta">
+        <a class="btn p" href="https://www.linkedin.com/in/adilsonmenechini">LinkedIn</a>
+        <a class="btn" href="https://github.com/adilsonmenechini">GitHub</a>
+        <a class="btn" href="mailto:adilsonmenechini@gmail.com">E-mail</a>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div><b>17+</b><span data-pt="anos em tecnologia" data-en="years in technology">anos em tecnologia</span></div>
+      <div><b>7+</b><span data-pt="anos em DevOps/SRE" data-en="years in DevOps/SRE">anos em DevOps/SRE</span></div>
+      <div><b>3</b><span data-pt="clouds: AWS, Azure e GCP" data-en="clouds: AWS, Azure and GCP">clouds: AWS, Azure e GCP</span></div>
+    </div>
+
+    <section id="competencias">
+      <h2 data-pt="Stack operacional" data-en="Operational stack">Stack operacional</h2>
+      <p class="sub" data-pt="As ferramentas com as quais trabalho no dia a dia." data-en="The tools I work with day to day.">As ferramentas com as quais trabalho no dia a dia.</p>
+      <div class="stack">
+        <div><h3 data-pt="Orquestração" data-en="Orchestration">Orquestração</h3><ul><li>Kubernetes</li><li>Istio</li><li>Linkerd</li><li>KEDA</li><li>Docker</li><li>Helm</li><li>Kustomize</li></ul></div>
+        <div><h3 data-pt="IaC e automação" data-en="IaC and automation">IaC e automação</h3><ul><li>Terraform</li><li>Terragrunt</li><li>Packer</li><li>Ansible</li><li>Rundeck</li></ul></div>
+        <div><h3 data-pt="GitOps e CI/CD" data-en="GitOps and CI/CD">GitOps e CI/CD</h3><ul><li>ArgoCD</li><li>Argo Rollouts</li><li>Codefresh</li><li>GitHub Actions</li><li>Azure DevOps</li><li>GitLab CI</li><li>Jenkins</li></ul></div>
+        <div><h3 data-pt="Observabilidade" data-en="Observability">Observabilidade</h3><ul><li>Datadog</li><li>Prometheus</li><li>Grafana</li><li>Loki</li><li>Jaeger</li><li>OpenTelemetry</li></ul></div>
+        <div><h3 data-pt="Cloud" data-en="Cloud">Cloud</h3><ul><li>AWS</li><li>Azure</li><li>GCP</li></ul></div>
+        <div><h3 data-pt="Segurança" data-en="Security">Segurança</h3><ul><li>OPA / Gatekeeper</li><li>Kyverno</li><li>Policy-as-Code</li><li>Vault</li><li>Sealed Secrets</li></ul></div>
+        <div><h3 data-pt="Linguagens" data-en="Languages">Linguagens</h3><ul><li>Python</li><li>Go</li><li>Bash</li><li>JavaScript</li><li>YAML</li></ul></div>
+        <div><h3 data-pt="IA e agentes" data-en="AI and agents">IA e agentes</h3><ul><li>LangChain</li><li>LangGraph</li><li>CrewAI</li><li>RAG</li><li>Bancos vetoriais / Vector stores</li></ul></div>
+      </div>
+    </section>
+
+    <section id="experiencia">
+      <h2 data-pt="Trajetória" data-en="Career">Trajetória</h2>
+      <p class="sub" data-pt="De suporte técnico a SRE Sênior." data-en="From technical support to Senior SRE.">De suporte técnico a SRE Sênior.</p>
+      <div class="rail">
+        <div class="tl">
+          <time>Ago/2020 — Oct/2026</time>
+          <h3>Ambev Tech</h3>
+          <div class="role first">
+            <h4 data-pt="SRE | Reliability Specialist Sênior" data-en="SRE | Senior Reliability Specialist">SRE | Reliability Specialist Sênior</h4>
+            <div class="org">Jan/2023 – Oct/2026</div>
+            <ul>
+              <li data-pt="Desenhei soluções de RAG e Agentic AI (LangChain, LangGraph, CrewAI) integrando LLMs a bancos vetoriais e bases de conhecimento." data-en="Designed RAG and Agentic AI solutions (LangChain, LangGraph, CrewAI) integrating LLMs with vector stores and knowledge bases.">Desenhei soluções de RAG e Agentic AI (LangChain, LangGraph, CrewAI) integrando LLMs a bancos vetoriais e bases de conhecimento.</li>
+              <li data-pt="Conduzi GitOps com ArgoCD e automatizei pipelines de CI/CD (GitHub Actions, Azure DevOps) em Kubernetes." data-en="Ran GitOps with ArgoCD and automated CI/CD pipelines (GitHub Actions, Azure DevOps) on Kubernetes.">Conduzi GitOps com ArgoCD e automatizei pipelines de CI/CD (GitHub Actions, Azure DevOps) em Kubernetes.</li>
+              <li data-pt="Projetei arquiteturas em AWS e Azure e automatizei a infraestrutura com Terraform, Terragrunt, Packer e Ansible." data-en="Designed AWS and Azure architectures and automated infrastructure with Terraform, Terragrunt, Packer and Ansible.">Projetei arquiteturas em AWS e Azure e automatizei a infraestrutura com Terraform, Terragrunt, Packer e Ansible.</li>
+              <li data-pt="Implementei observabilidade com Datadog; atuei em capacity planning, incidentes e gestão de crises." data-en="Implemented observability with Datadog; worked on capacity planning, incidents and crisis management.">Implementei observabilidade com Datadog; atuei em capacity planning, incidentes e gestão de crises.</li>
+              <li data-pt="Reduzi custos de nuvem (FinOps) e desenvolvi automações em Python, Go e JavaScript." data-en="Reduced cloud costs (FinOps) and built automations in Python, Go and JavaScript.">Reduzi custos de nuvem (FinOps) e desenvolvi automações em Python, Go e JavaScript.</li>
+            </ul>
+          </div>
+          <div class="role">
+            <h4 data-pt="SRE | Reliability Specialist Pleno" data-en="SRE | Reliability Specialist">SRE | Reliability Specialist Pleno</h4>
+            <div class="org">Fev/2022 – Jan/2023</div>
+            <ul><li data-pt="Operei workloads em Docker/Kubernetes e serviços AWS/Azure com IaC; automatizei CI/CD e implementei observabilidade e capacity planning." data-en="Operated Docker/Kubernetes workloads and AWS/Azure services with IaC; automated CI/CD and implemented observability and capacity planning.">Operei workloads em Docker/Kubernetes e serviços AWS/Azure com IaC; automatizei CI/CD e implementei observabilidade e capacity planning.</li></ul>
+          </div>
+          <div class="role">
+            <h4>DevOps Engineer</h4>
+            <div class="org">Mar/2021 – Fev/2022</div>
+            <ul><li data-pt="Estruturei monitoramento, pipelines de CI/CD e arquitetura de nuvem; participei da resposta a incidentes." data-en="Built monitoring, CI/CD pipelines and cloud architecture; took part in incident response.">Estruturei monitoramento, pipelines de CI/CD e arquitetura de nuvem; participei da resposta a incidentes.</li></ul>
+          </div>
+        </div>
+
+        <div class="tl">
+          <time>Ago/2020 – Mar/2021</time>
+          <h3>Trinovati Tecnologia</h3>
+          <h4 class="posto" data-pt="Analista de Infraestrutura Cloud" data-en="Cloud Infrastructure Analyst">Analista de Infraestrutura Cloud</h4>
+          <ul><li data-pt="Automatizei CI/CD e administrei serviços e custos na AWS, com Docker/Kubernetes e IaC." data-en="Automated CI/CD and managed services and costs on AWS, with Docker/Kubernetes and IaC.">Automatizei CI/CD e administrei serviços e custos na AWS, com Docker/Kubernetes e IaC.</li></ul>
+        </div>
+
+        <div class="tl">
+          <time>Jul/2014 – Jul/2020</time>
+          <h3>Prati-Donaduzzi Medicamentos Genéricos</h3>
+          <h4 class="posto" data-pt="Administrador de Sistemas" data-en="Systems Administrator">Administrador de Sistemas</h4>
+          <ul>
+            <li data-pt="Administrei firewall, proxy, VPN, switching e roteamento (Cisco, HP, Mikrotik), VMware e servidores Linux/Windows." data-en="Administered firewalls, proxy, VPN, switching and routing (Cisco, HP, Mikrotik), VMware and Linux/Windows servers.">Administrei firewall, proxy, VPN, switching e roteamento (Cisco, HP, Mikrotik), VMware e servidores Linux/Windows.</li>
+            <li data-pt="Monitorei ativos com Zabbix, Prometheus e Grafana, com foco em alta disponibilidade e segurança." data-en="Monitored assets with Zabbix, Prometheus and Grafana, focused on high availability and security.">Monitorei ativos com Zabbix, Prometheus e Grafana, com foco em alta disponibilidade e segurança.</li>
+          </ul>
+        </div>
+
+        <div class="tl">
+          <time>Mar/2009 – Jan/2014</time>
+          <h3>Certto Telecom</h3>
+          <h4 class="posto" data-pt="Suporte Técnico" data-en="Technical Support">Suporte Técnico</h4>
+          <ul><li data-pt="Suporte técnico a clientes de internet via rádio e fibra óptica." data-en="Technical support for internet customers over radio and fibre.">Suporte técnico a clientes de internet via rádio e fibra óptica.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="formacao">
+      <h2 data-pt="Formação" data-en="Education">Formação</h2>
+      <p class="sub">&nbsp;</p>
+      <ul class="edu">
+        <li><time>2017 — 2019</time><div><b>UTFPR</b><br><span data-pt="Especialização em Redes de Computadores: Gerenciamento de Sistemas, Redes e LAN/WAN" data-en="Specialisation in Computer Networks: Systems Management, Networks and LAN/WAN">Especialização em Redes de Computadores: Gerenciamento de Sistemas, Redes e LAN/WAN</span></div></li>
+        <li><time>2013 — 2015</time><div><b>Fundação Assis Gurgacz</b><br><span data-pt="Tecnólogo em Redes de Computadores" data-en="Associate degree in Computer Networks">Tecnólogo em Redes de Computadores</span></div></li>
+        <li><time>2009 — 2012</time><div><b>Unipar</b><br><span data-pt="Graduação" data-en="Undergraduate degree">Graduação</span></div></li>
+      </ul>
+    </section>
+
+    <section id="contato">
+      <h2 data-pt="Contato" data-en="Contact">Contato</h2>
+      <p class="sub" data-pt="Vamos conversar sobre SRE, plataforma e IA aplicada." data-en="Let's talk about SRE, platform engineering and applied AI.">Vamos conversar sobre SRE, plataforma e IA aplicada.</p>
+      <div class="links">
+        <a class="btn p" href="mailto:adilsonmenechini@gmail.com">adilsonmenechini@gmail.com</a>
+        <a class="btn" href="https://www.linkedin.com/in/adilsonmenechini">linkedin.com/in/adilsonmenechini</a>
+        <a class="btn" href="https://github.com/adilsonmenechini">github.com/adilsonmenechini</a>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>© 2026 Adilson Menechini</span><span>adilsonmenechini.github.io</span></footer>
+</div>
+
+<script>
+(function(){
+var r=document.documentElement;
+
+// theme
+try{var s=localStorage.getItem('theme');if(s)r.setAttribute('data-theme',s)}catch(e){}
+document.getElementById('t').onclick=function(){
+var d=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);
+var n=d?'light':'dark';r.setAttribute('data-theme',n);
+try{localStorage.setItem('theme',n)}catch(e){}
+};
+
+// language — a stored choice always wins; only a first visit consults the browser
+var lang=null;
+try{lang=localStorage.getItem('lang')}catch(e){}
+if(lang!=='pt'&&lang!=='en'){
+  lang=((navigator.language||'pt-BR').slice(0,2).toLowerCase()==='en')?'en':'pt';
+}
+function setLang(l){
+  lang=l;r.setAttribute('data-lang',l);r.setAttribute('lang',l==='en'?'en':'pt-BR');
+  document.title=l==='en'?'Adilson Menechini — Senior SRE':'Adilson Menechini — Solucionador de Problemas';
+  var d=document.querySelector('meta[name="description"]');
+  if(d)d.content=l==='en'
+    ?'Problem solver with 17+ years in technology. Kubernetes, GitOps, IaC, observability and AI applied to platform engineering.'
+    :'Solucionador de problemas com 17+ anos em tecnologia. Kubernetes, GitOps, IaC, observabilidade e IA aplicada à engenharia de plataforma.';
+  document.querySelectorAll('[data-pt][data-en]').forEach(function(el){
+    var v=el.getAttribute('data-'+l);
+    if(v!==null)el.textContent=v;
+  });
+  try{localStorage.setItem('lang',l)}catch(e){}
+  ['pt','en'].forEach(function(k){document.getElementById(k).setAttribute('aria-pressed',String(k===l))});
+}
+document.getElementById('pt').onclick=function(){setLang('pt')};
+document.getElementById('en').onclick=function(){setLang('en')};
+setLang(lang);
+
+// sticky header rule
+var hd=document.getElementById('hd'),topo=document.getElementById('topo');
+addEventListener('scroll',function(){hd.classList.toggle('stuck',topo.getBoundingClientRect().top<0)},{passive:true});
+
+// nav highlight on the section in view
+var links=[].slice.call(document.querySelectorAll('nav a[href^="#"]'));
+var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+if('IntersectionObserver' in window){
+var ob=new IntersectionObserver(function(es){
+es.forEach(function(e){if(e.isIntersecting){
+links.forEach(function(a){a.removeAttribute('aria-current')});
+var i=secs.indexOf(e.target);
+if(i>-1)links[i].setAttribute('aria-current','true');
+}});
+},{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(function(s){if(s)ob.observe(s)});
+}
+})();
+</script>
+</body>
+</html>
